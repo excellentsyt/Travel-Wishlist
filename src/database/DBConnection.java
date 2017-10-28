@@ -41,5 +41,5 @@ public interface DBConnection {
 	/**
 	 * 
 	 */
-	public void voteLocation(Location loc);
+	public void voteLocation(String user_id, int locationId);
 }

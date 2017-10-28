@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import database.DBConnection;
@@ -49,9 +50,14 @@ public class SearchVote extends HttpServlet {
 			locations = conn.getLocationsByVotes();
 			break;
 		case "distance":
-			double lat = Double.parseDouble(request.getParameter("lat"));
-			double lng = Double.parseDouble(request.getParameter("lng"));
-			locations = conn.getLocationsByDistance(lat, lng);
+			try {
+				double lat = Double.parseDouble(request.getParameter("lat"));
+				double lng = Double.parseDouble(request.getParameter("lng"));
+				locations = conn.getLocationsByDistance(lat, lng);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			break;
 		case "country":
 			locations = conn.getLocationsByMostPopularCountry();
@@ -60,6 +66,7 @@ public class SearchVote extends HttpServlet {
 			break;
 		}
 
+		// Create response JSON Array
 		List<JSONObject> list = new ArrayList<>();
 		try {
 			for (Location loc : locations) {
@@ -79,8 +86,17 @@ public class SearchVote extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// Vote is received here
 		
+		try {
+			String userId = request.getParameter("user_id");
+			int locationId = Integer.parseInt(request.getParameter("location_id"));
+			DBConnection conn = DBConnectionFactory.getDBConnection();
+			conn.voteLocation(userId, locationId);
+	
+			// Return save result to client
+			RpcHelper.writeJsonObject(response, new JSONObject().put("result", "SUCCESS"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 	}
-
 }

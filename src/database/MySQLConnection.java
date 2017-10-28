@@ -6,8 +6,10 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import algorithm.LocationComparator;
 import db.mysql.MySQLDBUtil;
 import entity.Location;
 import entity.Location.LocationBuilder;;
@@ -68,7 +70,6 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public List<Location> getLocationsByMostPopularCountry() {
-		// SELECT country, COUNT(country) as country_occurence FROM Customers Group by country ORDER BY country_occurence DESC limit 1;
 		if (conn == null) {
 			return null;
 		}
@@ -89,12 +90,11 @@ public class MySQLConnection implements DBConnection {
 	}
 
 	private String getMostPopularCountry() {
-		// SELECT country, COUNT(country) as country_occurence FROM Customers Group by country ORDER BY country_occurence DESC limit 1;
 		if (conn == null) {
 			return null;
 		}
 	
-		String country = null;
+		String country = "";
 		try {
 			// Find the most popular country
 			String sql = "SELECT country, COUNT(country) as country_occurence FROM Customers Group by country ORDER BY country_occurence DESC limit 1";
@@ -113,8 +113,26 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public List<Location> getLocationsByDistance(double lat, double lng) {
-		// TODO Auto-generated method stub
-		return null;
+		if (conn == null) {
+			return null;
+		}
+		
+		List<Location> locations = new ArrayList<>();
+		try {
+			String sql = "SELECT * FROM locations";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			ResultSet rs = statement.executeQuery();
+			locations = toLocationList(rs);
+			
+			// Sort locations list based on distance to the current location
+			LocationBuilder builder = new LocationBuilder();
+			Location cur = builder.setLatitude(lat).setLongitude(lng).build();
+			Collections.sort(locations, new LocationComparator(cur));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return locations;
 	}
 
 
@@ -126,9 +144,29 @@ public class MySQLConnection implements DBConnection {
 
 
 	@Override
-	public void voteLocation(Location loc) {
-		// TODO Auto-generated method stub
+	public void voteLocation(String user_id, int locationId) {
+		if (conn == null) {
+			return;
+		}
 		
+		try {
+			// Check whether it is a unique vote and update the votes table
+			String sql = "INSERT IGNORE INTO votes (user_id, location_id) VALUES (?,?)";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, user_id);
+			statement.setInt(2, locationId);
+			int result = statement.executeUpdate();	
+			if (result == 1) { // It is a unique user -> location key. If result == 0, it is an existing one
+							   // and the votes of this location should NOT be updated.
+				// Make the location vote increase by 1.
+				sql = "UPDATE locations SET count_of_votes = count_of_votes + 1 WHERE location_id = ?";
+				statement = conn.prepareStatement(sql);
+				statement.setInt(1, locationId);
+				statement.execute();	
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 
