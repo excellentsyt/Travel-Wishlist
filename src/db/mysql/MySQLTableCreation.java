@@ -30,47 +30,45 @@ public class MySQLTableCreation {
 			// Drop tables in case they exist.
 			Statement stmt = conn.createStatement();
 
-			String sql = "DROP TABLE IF EXISTS history";
+			String sql = "DROP TABLE IF EXISTS votes";
 			stmt.executeUpdate(sql);
 
-			sql = "DROP TABLE IF EXISTS categories";
-			stmt.executeUpdate(sql);
-
-			sql = "DROP TABLE IF EXISTS items";
+			sql = "DROP TABLE IF EXISTS locations";
 			stmt.executeUpdate(sql);
 
 			sql = "DROP TABLE IF EXISTS users";
 			stmt.executeUpdate(sql);
 
 			// Create new tables.
-			sql = "CREATE TABLE items " + "(item_id VARCHAR(255) NOT NULL, " + " name VARCHAR(255), "
-					+ "city VARCHAR(255), " + "state VARCHAR(255), " + "country VARCHAR(255), "
-					+ "zipcode VARCHAR(255), " + "rating FLOAT," + "address VARCHAR(255), " + "latitude FLOAT, "
-					+ " longitude FLOAT, " + "description VARCHAR(255), " + "snippet VARCHAR(255), "
-					+ "snippet_url VARCHAR(255), " + "image_url VARCHAR(255)," + "url VARCHAR(255),"
-					+ " PRIMARY KEY ( item_id ))";
+			sql = "CREATE TABLE locations " + "(location_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ "country VARCHAR(255), " + "latitude FLOAT, " + " longitude FLOAT, " + "description VARCHAR(255), "
+					+ "count_of_votes int," + "geohash VARCHAR(255)," + " PRIMARY KEY (location_id))";
 			stmt.executeUpdate(sql);
 
-			sql = "CREATE TABLE categories " + "(item_id VARCHAR(255) NOT NULL, " + " category VARCHAR(255), "
-					+ " PRIMARY KEY ( item_id, category), " + "FOREIGN KEY (item_id) REFERENCES items(item_id))";
+			sql = "CREATE TABLE users " + "(user_id VARCHAR(255) NOT NULL, " + " first_name VARCHAR(255), "
+					+ "last_name VARCHAR(255), " + " PRIMARY KEY ( user_id ))";
 			stmt.executeUpdate(sql);
 
-			sql = "CREATE TABLE users " + "(user_id VARCHAR(255) NOT NULL, " + " password VARCHAR(255) NOT NULL, "
-					+ " first_name VARCHAR(255), last_name VARCHAR(255), " + " PRIMARY KEY ( user_id ))";
-			stmt.executeUpdate(sql);
-
-			sql = "CREATE TABLE history " + "(history_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
-					+ " user_id VARCHAR(255) NOT NULL , " + " item_id VARCHAR(255) NOT NULL, "
-					+ " last_favor_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (history_id),"
-					+ "FOREIGN KEY (item_id) REFERENCES items(item_id),"
+			sql = "CREATE TABLE votes " + "(vote_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
+					+ " user_id VARCHAR(255) NOT NULL , " + " location_id bigint(20) unsigned NOT NULL, "
+					+ " last_added_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (vote_id),"
+					+ "FOREIGN KEY (location_id) REFERENCES locations(location_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);
 
 			// Insert data
 			// Create a fake user
-			sql = "INSERT INTO users " + "VALUES (\"1111\", \"3229c1097c00d497a0fd282d586be050\", \"John\", \"Smith\")";
-
-			System.out.println("Executing query:\n" + sql);
+			sql = "INSERT INTO users VALUES (\"1111\", \"Elon\", \"Musk\");";
+			stmt.executeUpdate(sql);
+			sql = "INSERT INTO users VALUES (\"2222\", \"Larry\", \"Page\");";
+			stmt.executeUpdate(sql);
+			sql = "INSERT INTO users VALUES (\"3333\", \"Jack\", \"Ma\");";
+			stmt.executeUpdate(sql);
+			sql = "INSERT INTO users VALUES (\"4444\", \"Bill\", \"Gates\");";
+			stmt.executeUpdate(sql);
+			sql = "INSERT INTO users VALUES (\"5555\", \"Tim\", \"Cook\");";
+			stmt.executeUpdate(sql);
+			sql = "INSERT INTO users VALUES (\"6666\", \"Mark\", \"Zuckerberg\");";
 			stmt.executeUpdate(sql);
 
 			System.out.println("Import is done successfully.");
