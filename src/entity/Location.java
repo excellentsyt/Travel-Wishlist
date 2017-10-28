@@ -1,7 +1,11 @@
 package entity;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class Location {
-	private int itemId;
+	private int locationId;
 	private String country;
 	private double latitude;
 	private double longitude;
@@ -10,7 +14,7 @@ public class Location {
 	private String geohash;
 	
 	private Location(LocationBuilder builder) {
-		this.itemId = builder.itemId;
+		this.locationId = builder.locationId;
 		this.country = builder.country;
 		this.latitude = builder.latitude;
 		this.longitude = builder.longitude;
@@ -19,8 +23,23 @@ public class Location {
 		this.geohash = builder.geohash;
 	}
 	
-	public int getItemId() {
-		return itemId;
+	public JSONObject toJSONObject() {
+		JSONObject obj = new JSONObject();
+		try {
+			obj.put("location_id", locationId);
+			obj.put("country", country);
+			obj.put("latitude", latitude);
+			obj.put("longitude", longitude);
+			obj.put("description", description);
+			obj.put("votes", votes);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return obj;
+	}
+	
+	public int getLocationId() {
+		return locationId;
 	}
 
 	public String getCountry() {
@@ -48,7 +67,7 @@ public class Location {
 	}
 
 	public static class LocationBuilder {
-		private int itemId;
+		private int locationId;
 		private String country;
 		private double latitude;
 		private double longitude;
@@ -56,8 +75,8 @@ public class Location {
 		private int votes;
 		private String geohash;
 		
-		public LocationBuilder setItemId(int itemId) {
-			this.itemId = itemId;
+		public LocationBuilder setLocationId(int locationId) {
+			this.locationId = locationId;
 			return this;
 		}
 		public LocationBuilder setCountry(String country) {
@@ -88,7 +107,5 @@ public class Location {
 		public Location build() {
 			return new Location(this);
 		}
-		
-		
 	}
 }

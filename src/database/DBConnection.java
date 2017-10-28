@@ -1,9 +1,13 @@
 package database;
 
-import java.util.Set;
+import java.util.List;
 
 import entity.Location;;
 
+/**
+ * @author siyangtao
+ *
+ */
 public interface DBConnection {
 	
 	/**
@@ -11,23 +15,26 @@ public interface DBConnection {
 	 */
 	public void close();
 
+	
 	/**
 	 * 
+	 * @return
 	 */
-	public Set<Location> getLocationsByVotes();
+	public List<Location> getLocationsByVotes();
 	
 	/**
 	 * 
 	 */
-	public Set<Location> getLocationsByPopularCountries();
+	public List<Location> getLocationsByMostPopularCountry();
 	
 	/**
 	 * 
 	 */
-	public Set<Location> getLocationsByDistance(String geoHash);
+	public List<Location> getLocationsByDistance(double lat, double lng);
 	
 	/**
 	 * 
+	 * @param loc
 	 */
 	public void addLocation(Location loc);
 	
