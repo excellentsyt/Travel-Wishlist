@@ -12,7 +12,7 @@ import java.util.List;
 import algorithm.LocationComparator;
 import db.mysql.MySQLDBUtil;
 import entity.Location;
-import entity.Location.LocationBuilder;;
+import entity.Location.LocationBuilder;
 
 public class MySQLConnection implements DBConnection {
 	private Connection conn;
@@ -96,6 +96,7 @@ public class MySQLConnection implements DBConnection {
 	
 		String country = "";
 		try {
+			// Bonus: Browse locations by most popular country
 			// Find the most popular country
 			String sql = "SELECT country, COUNT(country) as country_occurence FROM Customers Group by country ORDER BY country_occurence DESC limit 1";
 			PreparedStatement statement = conn.prepareStatement(sql);
@@ -138,8 +139,33 @@ public class MySQLConnection implements DBConnection {
 
 	@Override
 	public void addLocation(Location loc) {
-		// TODO Auto-generated method stub
+		if (conn == null) {
+			return;
+		}
 		
+		// Insert into location table
+		try {
+			// Bonus: Merge locations automatically that are within 10 kilometres from each other
+			String sql = "SELECT * FROM locations WHERE geohash = ?";
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, loc.getGeohash());
+			ResultSet rs = statement.executeQuery();
+			if (!rs.next()) { // If there is no rows that has the same geohash value
+				// Insert this location into the locations table as a new entry
+				sql = "INSERT IGNORE INTO locations (country, latitude, longitude, description, count_of_votes, geohash)"
+						+ " VALUES (?, ?, ?, ?, ?, ?)";
+				statement = conn.prepareStatement(sql);
+				statement.setString(1, loc.getCountry());
+				statement.setDouble(2, loc.getLatitude());
+				statement.setDouble(3, loc.getLongitude());
+				statement.setString(4, loc.getDescription());
+				statement.setInt(5, loc.getVotes());
+				statement.setString(6, loc.getGeohash());
+				statement.execute();	
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 

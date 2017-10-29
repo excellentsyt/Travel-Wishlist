@@ -40,7 +40,7 @@ public class SearchVote extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String userId = request.getParameter("user_id");
+//		String userId = request.getParameter("user_id");
 		String sortedby = request.getParameter("sortedby");
 
 		List<Location> locations = new ArrayList<>();
@@ -63,6 +63,8 @@ public class SearchVote extends HttpServlet {
 			locations = conn.getLocationsByMostPopularCountry();
 			break;
 		default:
+			// By default return locations by most votes
+			locations = conn.getLocationsByVotes();
 			break;
 		}
 
