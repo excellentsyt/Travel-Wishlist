@@ -49,9 +49,8 @@ public class MySQLTableCreation {
 					+ "last_name VARCHAR(255), " + " PRIMARY KEY ( user_id ))";
 			stmt.executeUpdate(sql);
 
-			sql = "CREATE TABLE votes " + "(vote_id bigint(20) unsigned NOT NULL AUTO_INCREMENT, "
-					+ " user_id VARCHAR(255) NOT NULL , " + " location_id bigint(20) unsigned NOT NULL, "
-					+ " last_added_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (vote_id),"
+			sql = "CREATE TABLE votes " + " (user_id VARCHAR(255) NOT NULL , " + " location_id bigint(20) unsigned NOT NULL, "
+					+ " last_added_time timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, " + " PRIMARY KEY (user_id, location_id),"
 					+ "FOREIGN KEY (location_id) REFERENCES locations(location_id),"
 					+ "FOREIGN KEY (user_id) REFERENCES users(user_id))";
 			stmt.executeUpdate(sql);

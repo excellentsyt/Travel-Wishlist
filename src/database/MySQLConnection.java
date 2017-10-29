@@ -98,7 +98,7 @@ public class MySQLConnection implements DBConnection {
 		try {
 			// Bonus: Browse locations by most popular country
 			// Find the most popular country
-			String sql = "SELECT country, COUNT(country) as country_occurence FROM Customers Group by country ORDER BY country_occurence DESC limit 1";
+			String sql = "SELECT country, COUNT(country) as country_occurence FROM locations Group by country ORDER BY country_occurence DESC limit 1";
 			PreparedStatement statement = conn.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
 			
@@ -138,9 +138,9 @@ public class MySQLConnection implements DBConnection {
 
 
 	@Override
-	public void addLocation(Location loc) {
+	public boolean addLocation(Location loc) {
 		if (conn == null) {
-			return;
+			return false;
 		}
 		
 		// Insert into location table
@@ -165,14 +165,16 @@ public class MySQLConnection implements DBConnection {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 
 	@Override
-	public void voteLocation(String user_id, int locationId) {
+	public boolean voteLocation(String user_id, int locationId) {
 		if (conn == null) {
-			return;
+			return false;
 		}
 		
 		try {
@@ -192,7 +194,9 @@ public class MySQLConnection implements DBConnection {
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
 

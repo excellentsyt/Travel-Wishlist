@@ -33,19 +33,12 @@ public class pinPointLocation extends HttpServlet {
     }
 
 	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		//
-	}
-
-	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
 			// Get Post body
-			String userId = request.getParameter("user_id");
+//			String userId = request.getParameter("user_id");
 			String description = request.getParameter("description");
 			String country = request.getParameter("country");
 			double lat = Double.parseDouble(request.getParameter("lat"));
@@ -72,5 +65,4 @@ public class pinPointLocation extends HttpServlet {
 			e.printStackTrace();
 		}
 	}
-
 }

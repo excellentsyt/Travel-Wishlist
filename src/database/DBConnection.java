@@ -36,10 +36,10 @@ public interface DBConnection {
 	 * 
 	 * @param loc
 	 */
-	public void addLocation(Location loc);
+	public boolean addLocation(Location loc);
 	
 	/**
 	 * 
 	 */
-	public void voteLocation(String user_id, int locationId);
+	public boolean voteLocation(String user_id, int locationId);
 }
