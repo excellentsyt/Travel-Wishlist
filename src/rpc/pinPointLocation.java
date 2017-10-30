@@ -37,12 +37,13 @@ public class pinPointLocation extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try {
-			// Get Post body
-//			String userId = request.getParameter("user_id");
-			String description = request.getParameter("description");
-			String country = request.getParameter("country");
-			double lat = Double.parseDouble(request.getParameter("lat"));
-			double lng = Double.parseDouble(request.getParameter("lng"));
+			// Get request body and convert to JSONObject
+			JSONObject input = RpcHelper.readJsonObject(request);
+			
+			String description = input.getString("description");
+			String country = input.getString("country");
+			double lat = input.getDouble("lat");
+			double lng = input.getDouble("lng");
 			String geoHash = GeoHash.encodeGeohash(lat, lng, 4); // Here the precision is 4 which is +- 20km. TODO: change to +-10km.
 			
 			// Build location object

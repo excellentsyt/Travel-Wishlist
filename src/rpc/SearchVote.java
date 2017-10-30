@@ -90,8 +90,12 @@ public class SearchVote extends HttpServlet {
 			throws ServletException, IOException {
 		
 		try {
-			String userId = request.getParameter("user_id");
-			int locationId = Integer.parseInt(request.getParameter("location_id"));
+			// Get request body and convert to JSONObject
+			JSONObject input = RpcHelper.readJsonObject(request);
+			
+			// Get user_id and location_id from input
+			String userId = input.getString("user_id");
+			int locationId = input.getInt("location_id");
 			DBConnection conn = DBConnectionFactory.getDBConnection();
 			conn.voteLocation(userId, locationId);
 	
